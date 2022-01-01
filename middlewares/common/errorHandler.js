@@ -1,14 +1,16 @@
+const express = require("express");
 const createError = require("http-errors");
 
 // 404 not found handler
 function notFoundHandler(req, res, next) {
-   next(createError(404, "404 Your requested content was not found!"));
+   return next(createError(404, "404 Your requested content was not found!"));
 }
 
 // default error handling
 const errorHandler = (err, req, res, next) => {
+   // error is here
    res.locals.error =
-      process.env.NODE_ENV === "development" ? err : { message: err.message };
+      process.env.NODE_ENV !== "development" ? err : { message: err.message };
 
    res.status(err.status || 500);
 

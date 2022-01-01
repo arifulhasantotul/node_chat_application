@@ -3,6 +3,9 @@ const dotenv = require("dotenv");
 const mongoose = require("mongoose");
 const path = require("path");
 const cookieParser = require("cookie-parser");
+const loginRouter = require("./Router/loginRouter");
+const usersRouter = require("./Router/usersRouter");
+const inboxRouter = require("./Router/inboxRouter");
 
 // internal imports
 const {
@@ -38,11 +41,9 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(cookieParser(process.env.COOKIE_SECRET));
 
 // router setup
-
-//  default route
-// app.get("/", (req, res) => {
-//    res.send("node chat application server running on port 5000");
-// });
+app.use("/", loginRouter);
+app.use("/users", usersRouter);
+app.use("/inbox", inboxRouter);
 
 // 404 not found handler
 app.use(notFoundHandler);
