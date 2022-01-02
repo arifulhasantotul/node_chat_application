@@ -1,6 +1,14 @@
+// external imports
+const multer = require("multer");
 const createError = require("http-errors");
+const path = require("path");
 
-function uploader(subfolder_path, allowed_file_size, max_file_size, error_msg) {
+function uploader(
+   subfolder_path,
+   allowed_file_types,
+   max_file_size,
+   error_msg
+) {
    // make upload object
    const UPLOADS_FOLDER = `${__dirname}/../public/uploads/${subfolder_path}/`;
 
@@ -31,7 +39,7 @@ function uploader(subfolder_path, allowed_file_size, max_file_size, error_msg) {
          fileSize: max_file_size,
       },
       fileFilter: (req, file, cb) => {
-         if (allowed_file_size.includes(file.mimetype)) {
+         if (allowed_file_types.includes(file.mimetype)) {
             cb(null, true);
          } else {
             cb(createError(error_msg));

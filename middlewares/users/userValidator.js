@@ -1,8 +1,11 @@
+// external imports
 const { check, validationResult } = require("express-validator");
 const createError = require("http-errors");
-const People = require("../../models/People");
 const { unlink } = require("fs");
 const path = require("path");
+
+// internal imports
+const User = require("../../models/People");
 
 // add user
 const addUserValidators = [
@@ -18,11 +21,11 @@ const addUserValidators = [
       .trim()
       .custom(async (value) => {
          try {
-            const user = await People.findOne({ email: value });
+            const user = await User.findOne({ email: value });
             if (user) {
                throw createError("Email is already taken!");
             }
-         } catch {
+         } catch (err) {
             throw createError(err.message);
          }
       }),
@@ -33,18 +36,16 @@ const addUserValidators = [
       .withMessage("Mobile number must be a valid Bangladeshi mobile number")
       .custom(async (value) => {
          try {
-            const user = await People.findOne({ mobile: value });
+            const user = await User.findOne({ mobile: value });
             if (user) {
                throw createError("Mobile number is already in use!");
             }
-         } catch {
+         } catch (err) {
             throw createError(err.message);
          }
       }),
    check("password")
-      .isStrongPassword("bn-BD", {
-         strictMode: true,
-      })
+      .isStrongPassword()
       .withMessage(
          "Password must be at least 8 characters long & should contain at least 1 lowercase, 1 uppercase, 1 number & 1 symbol"
       ),

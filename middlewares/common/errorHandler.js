@@ -1,4 +1,3 @@
-const express = require("express");
 const createError = require("http-errors");
 
 // 404 not found handler
