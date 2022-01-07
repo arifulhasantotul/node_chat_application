@@ -1,33 +1,44 @@
+// external imports
 const express = require("express");
+const http = require("http");
 const dotenv = require("dotenv");
 const mongoose = require("mongoose");
 const path = require("path");
 const cookieParser = require("cookie-parser");
-const loginRouter = require("./Router/loginRouter");
-const usersRouter = require("./Router/usersRouter");
-const inboxRouter = require("./Router/inboxRouter");
+const moment = require("moment");
+
+// internal imports
+const loginRouter = require("./router/loginRouter");
+const usersRouter = require("./router/usersRouter");
+const inboxRouter = require("./router/inboxRouter");
 
 // internal imports
 const {
-   notFoundHandler,
-   errorHandler,
+  notFoundHandler,
+  errorHandler,
 } = require("./middlewares/common/errorHandler");
 
-// express app initialization
 const app = express();
+const server = http.createServer(app);
 dotenv.config();
-const port = process.env.PORT || 5000;
+
+// socket creation
+const io = require("socket.io")(server);
+global.io = io;
+
+// set comment as app locals
+app.locals.moment = moment;
 
 // database connection
 mongoose
-   .connect(process.env.MONGOOSE_CONNECTION_STRING, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-   })
-   .then(() => console.log("mongoose connection successful!"))
-   .catch((err) => console.log(err));
+  .connect(process.env.MONGOOSE_CONNECTION_STRING, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => console.log("mongoose connection successful!"))
+  .catch((err) => console.log(err));
 
-// request parser
+// request parsers
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -37,10 +48,10 @@ app.set("view engine", "ejs");
 // set static folder
 app.use(express.static(path.join(__dirname, "public")));
 
-// parser cookies
+// parse cookies
 app.use(cookieParser(process.env.COOKIE_SECRET));
 
-// router setup
+// routing setup
 app.use("/", loginRouter);
 app.use("/users", usersRouter);
 app.use("/inbox", inboxRouter);
@@ -48,9 +59,9 @@ app.use("/inbox", inboxRouter);
 // 404 not found handler
 app.use(notFoundHandler);
 
-// default error handler
+// common error handler
 app.use(errorHandler);
 
-app.listen(port, () => {
-   console.log(`node chat application server on port`, port);
+server.listen(process.env.PORT, () => {
+  console.log(`app listening to port ${process.env.PORT}`);
 });
