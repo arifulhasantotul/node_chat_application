@@ -35,13 +35,13 @@ const checkLogin = (req, res, next) => {
       res.redirect("/");
     } else {
       res.status(401).json({
-        error: "Authetication failure!",
+        error: "Authentication failure!",
       });
     }
   }
 };
 
-// redirect already logged in user to inbox pabe
+// redirect already logged in user to inbox page
 const redirectLoggedIn = function (req, res, next) {
   let cookies =
     Object.keys(req.signedCookies).length > 0 ? req.signedCookies : null;
