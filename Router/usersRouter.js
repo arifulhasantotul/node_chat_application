@@ -20,19 +20,11 @@ const { checkLogin, requireRole } = require("../middlewares/common/checkLogin");
 const router = express.Router();
 
 // users page
-router.get(
-  "/",
-  decorateHtmlResponse("Users"),
-  checkLogin,
-  requireRole(["admin"]),
-  getUsers
-);
+router.get("/", decorateHtmlResponse("Users"), getUsers);
 
 // add user
 router.post(
   "/",
-  checkLogin,
-  requireRole(["admin"]),
   avatarUpload,
   addUserValidators,
   addUserValidationHandler,

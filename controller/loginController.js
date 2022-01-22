@@ -20,6 +20,7 @@ async function login(req, res, next) {
     });
 
     if (user && user._id) {
+      // check password validation
       const isValidPassword = await bcrypt.compare(
         req.body.password,
         user.password

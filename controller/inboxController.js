@@ -15,7 +15,10 @@ async function getInbox(req, res, next) {
         { "participant.id": req.user.userid },
       ],
     });
+    // setting conversation data to res.local
     res.locals.data = conversations;
+
+    // render inbox page
     res.render("inbox");
   } catch (err) {
     next(err);
@@ -27,6 +30,7 @@ async function searchUser(req, res, next) {
   const user = req.body.user;
   const searchQuery = user.replace("+88", "");
 
+  // using regex to create filter option
   const name_search_regex = new RegExp(escape(searchQuery), "i");
   const mobile_search_regex = new RegExp("^" + escape("+88" + searchQuery));
   const email_search_regex = new RegExp("^" + escape(searchQuery) + "$", "i");
@@ -99,10 +103,12 @@ async function addConversation(req, res, next) {
 // get messages of a conversation
 async function getMessages(req, res, next) {
   try {
+    // filter message
     const messages = await Message.find({
       conversation_id: req.params.conversation_id,
     }).sort("-createdAt");
 
+    // get participant
     const { participant } = await Conversation.findById(
       req.params.conversation_id
     );
@@ -133,6 +139,7 @@ async function sendMessage(req, res, next) {
       // save message text/attachment in database
       let attachments = null;
 
+      // check for file upload
       if (req.files && req.files.length > 0) {
         attachments = [];
 
@@ -196,6 +203,7 @@ async function sendMessage(req, res, next) {
   }
 }
 
+// module exports
 module.exports = {
   getInbox,
   searchUser,
